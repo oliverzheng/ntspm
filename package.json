@@ -16,7 +16,10 @@
   "dependencies": {
     "optimist": "0.3.4",
     "request": "2.x.x",
-	"underscore": "x.x.x"
+	"underscore": "x.x.x",
+	"semver": "x.x.x",
+	"temp": "x.x.x",
+	"async": "x.x.x"
   },
   "devDependencies": {
   },

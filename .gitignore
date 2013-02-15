@@ -5,3 +5,5 @@
 /*.suo
 
 /*.user
+/typings
+/_typings.d.ts
