@@ -134,9 +134,9 @@ function updateProjectFolder(projectFolder) {
 						//https://raw.github.com/soywiz/ntspm-typings/master/typings/node/0.8.0/node.d.t
 						//'https://github.com/soywiz/ntspm-typings/raw/master/typings/' + nodeModuleName + '/' + suitableVersion + '/' + nodeModuleName + '.d.ts'
 
-						var nodeModuleTypingFile = typingsFolder + '/' + nodeModuleName + '-' + suitableVersion + '.d.ts';
+						var nodeModuleTypingFile = typingsFolder + '/' + nodeModuleName + '.d.ts';
 
-						references.push('./typings/' + nodeModuleName + '-' + suitableVersion + '.d.ts');
+						references.push('./typings/' + nodeModuleName + '.d.ts');
 
 						if (fs.existsSync(nodeModuleTypingFile)) {
 							processNext();

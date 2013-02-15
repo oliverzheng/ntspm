@@ -110,8 +110,8 @@ function updateProjectFolder(projectFolder) {
                         var suitableVersion = findSuitableVersion(nodeModuleVersion, versions);
                         console.log('  Available versions: ' + JSON.stringify(versions));
                         console.log('  Suitable version: ' + suitableVersion);
-                        var nodeModuleTypingFile = typingsFolder + '/' + nodeModuleName + '-' + suitableVersion + '.d.ts';
-                        references.push('./typings/' + nodeModuleName + '-' + suitableVersion + '.d.ts');
+                        var nodeModuleTypingFile = typingsFolder + '/' + nodeModuleName + '.d.ts';
+                        references.push('./typings/' + nodeModuleName + '.d.ts');
                         if(fs.existsSync(nodeModuleTypingFile)) {
                             processNext();
                         } else {
