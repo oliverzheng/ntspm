@@ -15,7 +15,8 @@
   ],
   "dependencies": {
     "optimist": "0.3.4",
-    "request": "2.x.x"
+    "request": "2.x.x",
+	"underscore": "x.x.x"
   },
   "devDependencies": {
   },
