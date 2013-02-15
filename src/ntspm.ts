@@ -88,6 +88,24 @@ function getNodeModules(path, callback) {
 	callback(moduleVersions);
 }
 
+function versionToNumber(version: string): number {
+	var parts = String(version).split('.');
+	var version = 0;
+
+	while (parts.length > 0) {
+		version += parseInt(parts.shift());
+		version *= 1000;
+	}
+
+	return version;
+}
+
+function findSuitableVersion(javascriptVersion: string, typescriptVersions: string[]): string {
+	return _.max(typescriptVersions, (version) => {
+		return versionToNumber(version) - versionToNumber(javascriptVersion);
+	});
+}
+
 function updateProjectFolder(projectFolder) {
 	var typingsFolder = projectFolder + '/typings';
 	try { fs.mkdirSync(typingsFolder, '0777'); } catch (e) { }
@@ -103,15 +121,14 @@ function updateProjectFolder(projectFolder) {
 			var nodeModuleName = nodeModuleNames.shift();
 			var nodeModuleVersion = nodeModules[nodeModuleName];
 			if (nodeModuleName !== undefined) {
-				console.log('Processing: ' + nodeModuleName);
+				console.log('Processing: ' + nodeModuleName + '@' + nodeModuleVersion);
 				downloadHttp('https://api.github.com/repos/soywiz/ntspm-typings/contents/typings/' + nodeModuleName, (err, data) => {
 					if (err) {
 						console.log('  ' + err);
 						processNext();
 					} else {
 						var versions = _.map(JSON.parse(data), (item) => item.name);
-						var suitableVersion = semver.maxSatisfying(versions, nodeModuleVersion);
-						if (suitableVersion === undefined) suitableVersion = versions[0];
+						var suitableVersion = findSuitableVersion(nodeModuleVersion, versions);
 						console.log('  Available versions: ' + JSON.stringify(versions));
 						console.log('  Suitable version: ' + suitableVersion);
 						//https://raw.github.com/soywiz/ntspm-typings/master/typings/node/0.8.0/node.d.t

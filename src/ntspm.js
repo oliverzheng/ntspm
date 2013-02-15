@@ -4,7 +4,7 @@ var fs = require('fs')
 
 var https = require('https')
 
-var semver = require('semver')
+
 var crypto = require('crypto')
 var _ = require('underscore')
 function getHttpCacheFolder() {
@@ -70,6 +70,20 @@ function getNodeModules(path, callback) {
     moduleVersions['node'] = '0.8.19';
     callback(moduleVersions);
 }
+function versionToNumber(version) {
+    var parts = String(version).split('.');
+    var version = 0;
+    while(parts.length > 0) {
+        version += parseInt(parts.shift());
+        version *= 1000;
+    }
+    return version;
+}
+function findSuitableVersion(javascriptVersion, typescriptVersions) {
+    return _.max(typescriptVersions, function (version) {
+        return versionToNumber(version) - versionToNumber(javascriptVersion);
+    });
+}
 function updateProjectFolder(projectFolder) {
     var typingsFolder = projectFolder + '/typings';
     try  {
@@ -84,7 +98,7 @@ function updateProjectFolder(projectFolder) {
             var nodeModuleName = nodeModuleNames.shift();
             var nodeModuleVersion = nodeModules[nodeModuleName];
             if(nodeModuleName !== undefined) {
-                console.log('Processing: ' + nodeModuleName);
+                console.log('Processing: ' + nodeModuleName + '@' + nodeModuleVersion);
                 downloadHttp('https://api.github.com/repos/soywiz/ntspm-typings/contents/typings/' + nodeModuleName, function (err, data) {
                     if(err) {
                         console.log('  ' + err);
@@ -93,10 +107,7 @@ function updateProjectFolder(projectFolder) {
                         var versions = _.map(JSON.parse(data), function (item) {
                             return item.name;
                         });
-                        var suitableVersion = semver.maxSatisfying(versions, nodeModuleVersion);
-                        if(suitableVersion === undefined) {
-                            suitableVersion = versions[0];
-                        }
+                        var suitableVersion = findSuitableVersion(nodeModuleVersion, versions);
                         console.log('  Available versions: ' + JSON.stringify(versions));
                         console.log('  Suitable version: ' + suitableVersion);
                         var nodeModuleTypingFile = typingsFolder + '/' + nodeModuleName + '-' + suitableVersion + '.d.ts';
