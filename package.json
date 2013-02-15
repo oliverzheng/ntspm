@@ -1,0 +1,31 @@
+{
+  "name": "ntspm",
+  "preferGlobal": "true",
+  "description": "Node.js typescript package manager",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/soywiz/ntspm.git"
+  },
+  "keywords": [
+    "typescript",
+    "package",
+    "manager",
+    "tools"
+  ],
+  "dependencies": {
+    "optimist": "0.3.4",
+    "request": "2.x.x"
+  },
+  "devDependencies": {
+  },
+  "bin": {
+    "ntspm": "./bin/ntspm"
+  },
+  "main": "./src/ntspm",
+  "scripts": {
+  },
+  "engines": {
+    "node": "0.8.x"
+  }
+}
