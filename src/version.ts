@@ -6,7 +6,7 @@ export function tokenizeVersion(version: string): number[] {
 	return version.split('.').map((value) => parseInt(value));
 }
 
-function findSuitableTokenizedVersion(version: number[], matchVersions: number[][], index: number): number[]{
+function findSuitableTokenizedVersion(version: number[], matchVersions: number[][], index: number): number[] {
 	//console.log('-------------------');
 	//console.log(version);
 	//console.log(matchVersions);

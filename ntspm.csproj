@@ -53,6 +53,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="src\ntspm.ts" />
+    <TypeScriptCompile Include="test\version.test.ts" />
+    <TypeScriptCompile Include="src\version.ts" />
+    <Content Include="src\version.js">
+      <DependentUpon>version.ts</DependentUpon>
+    </Content>
+    <Content Include="test\version.js">
+      <DependentUpon>version.test.ts</DependentUpon>
+    </Content>
     <Content Include="typings.d.ts" />
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +69,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="package.json" />
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <TypeScriptTarget>ES3</TypeScriptTarget>
