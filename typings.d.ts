@@ -3,3 +3,4 @@
 ///<reference path='./typescript-node-definitions/underscore.d.ts'/>
 ///<reference path='./typescript-node-definitions/async.d.ts'/>
 ///<reference path='./typescript-node-definitions/semver.d.ts'/>
+///<reference path='./typescript-node-definitions/mocha.d.ts'/>

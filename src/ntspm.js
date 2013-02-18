@@ -7,6 +7,7 @@ var https = require('https')
 
 var crypto = require('crypto')
 var _ = require('underscore')
+var version = require('./version')
 function getHttpCacheFolder() {
     var cachePath = process.env['TEMP'] + '/ntspm_cache';
     try  {
@@ -70,20 +71,6 @@ function getNodeModules(path, callback) {
     moduleVersions['node'] = '0.8.19';
     callback(moduleVersions);
 }
-function versionToNumber(version) {
-    var parts = String(version).split('.');
-    var version = 0;
-    while(parts.length > 0) {
-        version += parseInt(parts.shift());
-        version *= 1000;
-    }
-    return version;
-}
-function findSuitableVersion(javascriptVersion, typescriptVersions) {
-    return _.max(typescriptVersions, function (version) {
-        return versionToNumber(version) - versionToNumber(javascriptVersion);
-    });
-}
 function updateProjectFolder(projectFolder) {
     var typingsFolder = projectFolder + '/typings';
     try  {
@@ -107,7 +94,7 @@ function updateProjectFolder(projectFolder) {
                         var versions = _.map(JSON.parse(data), function (item) {
                             return item.name;
                         });
-                        var suitableVersion = findSuitableVersion(nodeModuleVersion, versions);
+                        var suitableVersion = version.findSuitableVersion(nodeModuleVersion, versions);
                         console.log('  Available versions: ' + JSON.stringify(versions));
                         console.log('  Suitable version: ' + suitableVersion);
                         var nodeModuleTypingFile = typingsFolder + '/' + nodeModuleName + '.d.ts';

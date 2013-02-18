@@ -9,6 +9,7 @@ import async = module('async');
 import semver = module('semver');
 import crypto = module('crypto');
 import _ = module('underscore');
+import version = module('./version');
 
 function getHttpCacheFolder() {
 	var cachePath = process.env['TEMP'] + '/ntspm_cache';
@@ -88,24 +89,6 @@ function getNodeModules(path, callback) {
 	callback(moduleVersions);
 }
 
-function versionToNumber(version: string): number {
-	var parts = String(version).split('.');
-	var version = 0;
-
-	while (parts.length > 0) {
-		version += parseInt(parts.shift());
-		version *= 1000;
-	}
-
-	return version;
-}
-
-function findSuitableVersion(javascriptVersion: string, typescriptVersions: string[]): string {
-	return _.max(typescriptVersions, (version) => {
-		return versionToNumber(version) - versionToNumber(javascriptVersion);
-	});
-}
-
 function updateProjectFolder(projectFolder) {
 	var typingsFolder = projectFolder + '/typings';
 	try { fs.mkdirSync(typingsFolder, '0777'); } catch (e) { }
@@ -128,7 +111,7 @@ function updateProjectFolder(projectFolder) {
 						processNext();
 					} else {
 						var versions = _.map(JSON.parse(data), (item) => item.name);
-						var suitableVersion = findSuitableVersion(nodeModuleVersion, versions);
+						var suitableVersion = version.findSuitableVersion(nodeModuleVersion, versions);
 						console.log('  Available versions: ' + JSON.stringify(versions));
 						console.log('  Suitable version: ' + suitableVersion);
 						//https://raw.github.com/soywiz/ntspm-typings/master/typings/node/0.8.0/node.d.t
