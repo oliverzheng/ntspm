@@ -12,9 +12,7 @@ import _ = module('underscore');
 import version = module('./version');
 
 function getHttpCacheFolder() {
-	var cachePath = process.env['TEMP'] + '/ntspm_cache';
-	try { fs.mkdirSync(cachePath, '0777'); } catch (e) { }
-	return cachePath;
+	return temp.mkdirSync('ntspm_cache', '0777');
 }
 
 function md5String(str) {
@@ -101,6 +99,9 @@ function updateProjectFolder(projectFolder) {
 		//console.log(nodeModuleNames);
 
 		processNext = function () {
+			if (nodeModuleNames.length === 0)
+				return;
+
 			var nodeModuleName = nodeModuleNames.shift();
 			var nodeModuleVersion = nodeModules[nodeModuleName];
 			if (nodeModuleName !== undefined) {

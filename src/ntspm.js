@@ -9,12 +9,7 @@ var crypto = require('crypto')
 var _ = require('underscore')
 var version = require('./version')
 function getHttpCacheFolder() {
-    var cachePath = process.env['TEMP'] + '/ntspm_cache';
-    try  {
-        fs.mkdirSync(cachePath, '0777');
-    } catch (e) {
-    }
-    return cachePath;
+    return temp.mkdirSync('ntspm_cache', '0777');
 }
 function md5String(str) {
     var md5 = crypto.createHash('md5');
@@ -82,6 +77,9 @@ function updateProjectFolder(projectFolder) {
         var processNext;
         var references = [];
         processNext = function () {
+            if(nodeModuleNames.length === 0) {
+                return;
+            }
             var nodeModuleName = nodeModuleNames.shift();
             var nodeModuleVersion = nodeModules[nodeModuleName];
             if(nodeModuleName !== undefined) {
@@ -121,3 +119,4 @@ function updateProjectFolder(projectFolder) {
     });
 }
 updateProjectFolder('.');
+
