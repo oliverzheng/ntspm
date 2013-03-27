@@ -31,22 +31,26 @@ function downloadHttp(url, callback) {
     } else {
         console.log(url);
         https.get(url, function (res) {
-            if(res.statusCode != 200) {
-                fs.writeFileSync(urlFileCache, JSON.stringify({
-                    err: 'status code ' + res.statusCode,
-                    data: null
-                }), 'utf-8');
-                doCacheCallback();
+            var err = null;
+            var data = null;
+            res.setEncoding('utf8');
+            if(res.statusCode !== 200) {
+                err = 'status code ' + res.statusCode;
+                res.on('data', function () {
+                });
             } else {
-                res.on('data', function (data) {
-                    var dataString = data.toString('utf-8');
-                    fs.writeFileSync(urlFileCache, JSON.stringify({
-                        err: null,
-                        data: dataString
-                    }), 'utf-8');
-                    doCacheCallback();
+                data = '';
+                res.on('data', function (chunk) {
+                    data += chunk;
                 });
             }
+            res.on('end', function () {
+                fs.writeFileSync(urlFileCache, JSON.stringify({
+                    err: err,
+                    data: data
+                }), 'utf-8');
+                doCacheCallback();
+            });
         }).on('error', function (e) {
             callback(e, '');
         });

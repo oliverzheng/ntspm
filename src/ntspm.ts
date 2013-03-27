@@ -41,17 +41,25 @@ function downloadHttp(url: string, callback: (err: Error, data: string) => void)
 		console.log(url);
 		https.get(url, function (res: http.ClientResponse) {
 			//console.log("Got response: " + res.statusCode);
-			if (res.statusCode != 200) {
-				fs.writeFileSync(urlFileCache, JSON.stringify({ err: 'status code ' + res.statusCode, data: null }), 'utf-8');
-				doCacheCallback();
+			var err: string = null;
+			var data: string = null;
+			res.setEncoding('utf8');
+			if (res.statusCode !== 200) {
+				err = 'status code ' + res.statusCode;
+				res.on('data', () => {});
 			} else {
-				res.on('data', (data) => {
-					var dataString = data.toString('utf-8');
-					//console.log('data: ' + data);
-					fs.writeFileSync(urlFileCache, JSON.stringify({ err: null, data: dataString }), 'utf-8');
-					doCacheCallback();
+				data = '';
+				res.on('data', (chunk) => {
+					data += chunk;
 				});
 			}
+			res.on('end', () => {
+				fs.writeFileSync(urlFileCache, JSON.stringify({
+					err: err,
+					data: data
+				}), 'utf-8');
+				doCacheCallback();
+			});
 			//console.log(res);
 		}).on('error', function (e) {
 			callback(e, '');
