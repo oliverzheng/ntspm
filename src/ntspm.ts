@@ -107,8 +107,16 @@ function updateProjectFolder(projectFolder) {
 		//console.log(nodeModuleNames);
 
 		processNext = function () {
-			if (nodeModuleNames.length === 0)
+			if (nodeModuleNames.length === 0) {
+				// All processed
+				var typingsFileString = '';
+				_.forEach(references, (reference) => {
+					typingsFileString += "///<reference path='" + reference + "'/>\r\n";
+				});
+				fs.writeFileSync(projectFolder + '/_typings.d.ts', typingsFileString, 'utf-8');
+				/	/references
 				return;
+			}
 
 			var nodeModuleName = nodeModuleNames.shift();
 			var nodeModuleVersion = nodeModules[nodeModuleName];
@@ -142,15 +150,6 @@ function updateProjectFolder(projectFolder) {
 						}
 					}
 				});
-			}
-			// All processed
-			else {
-				var typingsFileString = '';
-				_.forEach(references, (reference) => {
-					typingsFileString += "///<reference path='" + reference + "'/>\r\n";
-				});
-				fs.writeFileSync(projectFolder + '/_typings.d.ts', typingsFileString, 'utf-8');
-				//references
 			}
 		};
 

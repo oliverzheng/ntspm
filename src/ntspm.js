@@ -82,6 +82,11 @@ function updateProjectFolder(projectFolder) {
         var references = [];
         processNext = function () {
             if(nodeModuleNames.length === 0) {
+                var typingsFileString = '';
+                _.forEach(references, function (reference) {
+                    typingsFileString += "///<reference path='" + reference + "'/>\r\n";
+                });
+                fs.writeFileSync(projectFolder + '/_typings.d.ts', typingsFileString, 'utf-8');
                 return;
             }
             var nodeModuleName = nodeModuleNames.shift();
@@ -111,12 +116,6 @@ function updateProjectFolder(projectFolder) {
                         }
                     }
                 });
-            } else {
-                var typingsFileString = '';
-                _.forEach(references, function (reference) {
-                    typingsFileString += "///<reference path='" + reference + "'/>\r\n";
-                });
-                fs.writeFileSync(projectFolder + '/_typings.d.ts', typingsFileString, 'utf-8');
             }
         };
         processNext();
