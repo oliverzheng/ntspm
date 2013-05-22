@@ -8,6 +8,7 @@ var https = require('https')
 var crypto = require('crypto')
 var _ = require('underscore')
 var version = require('./version')
+var url = require('url')
 function getHttpCacheFolder() {
     return temp.mkdirSync('ntspm_cache', '0777');
 }
@@ -16,8 +17,8 @@ function md5String(str) {
     md5.update(str, 'utf-8');
     return md5.digest('hex');
 }
-function downloadHttp(url, callback) {
-    var urlFileCache = getHttpCacheFolder() + '/' + md5String(url);
+function downloadHttp(uri, callback) {
+    var urlFileCache = getHttpCacheFolder() + '/' + md5String(uri);
     function doCacheCallback() {
         var info = JSON.parse(fs.readFileSync(urlFileCache).toString('utf-8'));
         if(info.err != null) {
@@ -29,8 +30,17 @@ function downloadHttp(url, callback) {
     if(fs.existsSync(urlFileCache)) {
         doCacheCallback();
     } else {
-        console.log(url);
-        https.get(url, function (res) {
+        console.log(uri);
+        var parsed = url.parse(uri);
+        var options = {
+            host: parsed.host,
+            port: parseInt(parsed.port),
+            path: parsed.pathname,
+            headers: {
+                'User-Agent': 'Node.js TypeScript Package Manager (soywiz/ntspm)'
+            }
+        };
+        https.get(options, function (res) {
             var err = null;
             var data = null;
             res.setEncoding('utf8');

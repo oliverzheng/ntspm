@@ -10,6 +10,7 @@ import semver = module('semver');
 import crypto = module('crypto');
 import _ = module('underscore');
 import version = module('./version');
+import url = module('url');
 
 function getHttpCacheFolder() {
 	return temp.mkdirSync('ntspm_cache', '0777');
@@ -21,8 +22,8 @@ function md5String(str) {
 	return md5.digest('hex');
 }
 
-function downloadHttp(url: string, callback: (err: Error, data: string) => void) {
-	var urlFileCache = getHttpCacheFolder() + '/' + md5String(url);
+function downloadHttp(uri: string, callback: (err: Error, data: string) => void) {
+	var urlFileCache = getHttpCacheFolder() + '/' + md5String(uri);
 	//console.log(urlFileCache);
 	//process.exit();
 
@@ -38,8 +39,17 @@ function downloadHttp(url: string, callback: (err: Error, data: string) => void)
 	if (fs.existsSync(urlFileCache)) {
 		doCacheCallback();
 	} else {
-		console.log(url);
-		https.get(url, function (res: http.ClientResponse) {
+		console.log(uri);
+		var parsed = url.parse(uri);
+		var options = {
+			host: parsed.host,
+			port: parseInt(parsed.port),
+			path: parsed.pathname,
+			headers: {
+				'User-Agent': 'Node.js TypeScript Package Manager (soywiz/ntspm)'
+			},
+		};
+		https.get(options, function (res: http.ClientResponse) {
 			//console.log("Got response: " + res.statusCode);
 			var err: string = null;
 			var data: string = null;
@@ -114,7 +124,7 @@ function updateProjectFolder(projectFolder) {
 					typingsFileString += "///<reference path='" + reference + "'/>\r\n";
 				});
 				fs.writeFileSync(projectFolder + '/_typings.d.ts', typingsFileString, 'utf-8');
-				/	/references
+				//references
 				return;
 			}
 
